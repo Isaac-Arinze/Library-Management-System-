@@ -1,4 +1,4 @@
-package com.library.library_management_backend.serviice;
+package com.library.library_management_backend.service;
 
 import com.library.library_management_backend.entity.Book;
 import org.springframework.data.domain.Page;

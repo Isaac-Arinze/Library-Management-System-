@@ -1,8 +1,8 @@
-package com.library.library_management_backend.serviice.impl;
+package com.library.library_management_backend.service.impl;
 
 import com.library.library_management_backend.entity.Book;
 import com.library.library_management_backend.repository.BookRepository;
-import com.library.library_management_backend.serviice.BookService;
+import com.library.library_management_backend.service.BookService;
 import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -58,7 +58,8 @@ public class BookServiceImpl implements BookService {
     }
 
     @Override
-    public List<Book> searchBooks(String searchBook) {
+    public List<Book>
+    searchBooks(String searchBook) {
         return bookRepository.searchBooks(searchBook);
     }
 }
