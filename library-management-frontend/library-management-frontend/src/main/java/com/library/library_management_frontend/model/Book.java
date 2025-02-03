@@ -1,28 +1,37 @@
 package com.library.library_management_frontend.model;
 
+
+import javafx.beans.property.SimpleStringProperty;
+import javafx.beans.property.StringProperty;
+
 import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
 
 public class Book {
-    private Long id;
-    private String title;
-    private String author;
-    private String isbn;
-    private LocalDate publishedDate;
+    private final StringProperty id = new SimpleStringProperty();
+    private final StringProperty title = new SimpleStringProperty();
+    private final StringProperty author = new SimpleStringProperty();
+    private final StringProperty isbn = new SimpleStringProperty();
+    private final StringProperty publishedDate = new SimpleStringProperty();
 
-    // Getters and Setters
-    public Long getId() { return id; }
-    public void setId(Long id) { this.id = id; }
+    // Getters and Setters for Properties
+    public String getId() { return id.get(); }
+    public void setId(String id) { this.id.set(id); }
+    public StringProperty idProperty() { return id; }
 
-    public String getTitle() { return title; }
-    public void setTitle(String title) { this.title = title; }
+    public String getTitle() { return title.get(); }
+    public void setTitle(String title) { this.title.set(title); }
+    public StringProperty titleProperty() { return title; }
 
-    public String getAuthor() { return author; }
-    public void setAuthor(String author) { this.author = author; }
+    public String getAuthor() { return author.get(); }
+    public void setAuthor(String author) { this.author.set(author); }
+    public StringProperty authorProperty() { return author; }
 
-    public String getIsbn() { return isbn; }
-    public void setIsbn(String isbn) { this.isbn = isbn; }
+    public String getIsbn() { return isbn.get(); }
+    public void setIsbn(String isbn) { this.isbn.set(isbn); }
+    public StringProperty isbnProperty() { return isbn; }
 
-    public LocalDate getPublishedDate() { return publishedDate; }
-    public void setPublishedDate(LocalDate publishedDate) { this.publishedDate = publishedDate; }
-
+    public String getPublishedDate() { return publishedDate.get(); }
+    public void setPublishedDate(String publishedDate) { this.publishedDate.set(publishedDate); }
+    public StringProperty publishedDateProperty() { return publishedDate; }
 }

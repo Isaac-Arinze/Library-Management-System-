@@ -1,100 +1,91 @@
 package com.library.library_management_frontend.controller;
 
 import com.library.library_management_frontend.model.Book;
-import com.library.library_management_frontend.service.BookService;
-
-import com.library.library_management_frontend.util.AlertUtils;
-import com.library.library_management_frontend.util.ValidationUtils;
+import javafx.collections.FXCollections;
+import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
 import javafx.scene.control.*;
-import javafx.collections.FXCollections;
+import org.springframework.http.*;
+import org.springframework.web.client.RestTemplate;
+
+import java.time.LocalDate;
 
 public class MainController {
+
     @FXML private TableView<Book> bookTable;
+    @FXML private TableColumn<Book, String> titleColumn;
+    @FXML private TableColumn<Book, String> authorColumn;
+    @FXML private TableColumn<Book, String> isbnColumn;
+    @FXML private TableColumn<Book, String> publishedDateColumn;
+
     @FXML private TextField titleField;
     @FXML private TextField authorField;
     @FXML private TextField isbnField;
-    @FXML private DatePicker publishedDatePicker;
+    @FXML private TextField publishedDateField;
 
-    private final BookService bookService;
-    private Book selectedBook;
+    private final RestTemplate restTemplate = new RestTemplate();
+    private final String BASE_URL = "http://localhost:8080/api/books";
 
-    public MainController() {
-        this.bookService = new BookService();
-    }
+    private ObservableList<Book> bookList = FXCollections.observableArrayList();
 
     @FXML
     public void initialize() {
-        setupTable();
+        // Bind columns to properties
+        titleColumn.setCellValueFactory(cellData -> cellData.getValue().titleProperty());
+        authorColumn.setCellValueFactory(cellData -> cellData.getValue().authorProperty());
+        isbnColumn.setCellValueFactory(cellData -> cellData.getValue().isbnProperty());
+        publishedDateColumn.setCellValueFactory(cellData -> cellData.getValue().publishedDateProperty());
+
+        // Load books from the backend
         loadBooks();
     }
 
-    private void setupTable() {
-        // Setup table columns
-        TableColumn<Book, String> titleCol = new TableColumn<>("Title");
-        titleCol.setCellValueFactory(cellData ->
-                new javafx.beans.property.SimpleStringProperty(
-                        cellData.getValue().getTitle()));
-
-        // Add more columns similarly
-        bookTable.getColumns().addAll(titleCol);
-
-        // Handle selection
-        bookTable.getSelectionModel().selectedItemProperty().addListener(
-                (obs, oldSelection, newSelection) -> {
-                    selectedBook = newSelection;
-                    populateFields();
-                });
+    private void loadBooks() {
+        Book[] books = restTemplate.getForObject(BASE_URL, Book[].class);
+        bookList.clear();
+        if (books != null) {
+            bookList.addAll(books);
+        }
+        bookTable.setItems(bookList);
     }
 
     @FXML
-    private void handleSave() {
-        try {
-            if (!ValidationUtils.validateBookFields(titleField.getText(),
-                    authorField.getText(), isbnField.getText())) {
-                AlertUtils.showError("Validation Error",
-                        "Please fill all required fields");
-                return;
-            }
+    private void handleAddBook() {
+        Book book = new Book();
+        book.setTitle(titleField.getText());
+        book.setAuthor(authorField.getText());
+        book.setIsbn(isbnField.getText());
+        book.setPublishedDate(String.valueOf(LocalDate.parse(publishedDateField.getText())));
 
-            Book book = new Book();
-            book.setTitle(titleField.getText());
-            book.setAuthor(authorField.getText());
-            book.setIsbn(isbnField.getText());
-            book.setPublishedDate(publishedDatePicker.getValue());
-
-            bookService.saveBook(book);
-            AlertUtils.showInfo("Success", "Book saved successfully");
-            loadBooks();
-            clearFields();
-        } catch (Exception e) {
-            AlertUtils.showError("Error", "Failed to save book: " + e.getMessage());
-        }
+        restTemplate.postForObject(BASE_URL, book, Book.class);
+        loadBooks();
     }
 
-    private void loadBooks() {
-        try {
-            var books = bookService.getAllBooks();
-            bookTable.setItems(FXCollections.observableArrayList(books));
-        } catch (Exception e) {
-            AlertUtils.showError("Error", "Failed to load books: " + e.getMessage());
-        }
-    }
-
-    private void populateFields() {
+    @FXML
+    private void handleUpdateBook() {
+        Book selectedBook = bookTable.getSelectionModel().getSelectedItem();
         if (selectedBook != null) {
-            titleField.setText(selectedBook.getTitle());
-            authorField.setText(selectedBook.getAuthor());
-            isbnField.setText(selectedBook.getIsbn());
-            publishedDatePicker.setValue(selectedBook.getPublishedDate());
+            selectedBook.setTitle(titleField.getText());
+            selectedBook.setAuthor(authorField.getText());
+            selectedBook.setIsbn(isbnField.getText());
+            selectedBook.setPublishedDate(String.valueOf(LocalDate.parse(publishedDateField.getText())));
+
+            restTemplate.put(BASE_URL + "/" + selectedBook.getId(), selectedBook);
+            loadBooks();
         }
     }
 
-    private void clearFields() {
-        titleField.clear();
-        authorField.clear();
-        isbnField.clear();
-        publishedDatePicker.setValue(null);
-        selectedBook = null;
+    @FXML
+    private void handleDeleteBook() {
+        Book selectedBook = bookTable.getSelectionModel().getSelectedItem();
+        if (selectedBook != null) {
+            restTemplate.delete(BASE_URL + "/" + selectedBook.getId());
+            loadBooks();
+        }
+    }
+
+    @FXML
+    private void handleRefresh() {
+        loadBooks();
     }
 }
