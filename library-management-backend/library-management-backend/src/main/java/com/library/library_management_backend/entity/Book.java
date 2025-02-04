@@ -23,7 +23,7 @@ public class Book {
     @NotBlank(message = "ISBN is required")
     private String isbn;
 
-    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "dd/MM/yyyy")
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd")
     private LocalDate publishedDate;
 
     // Getters and Setters

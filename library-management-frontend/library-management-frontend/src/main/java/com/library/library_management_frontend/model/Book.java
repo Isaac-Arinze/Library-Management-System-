@@ -1,6 +1,7 @@
 package com.library.library_management_frontend.model;
 
 
+import com.fasterxml.jackson.annotation.JsonFormat;
 import javafx.beans.property.SimpleStringProperty;
 import javafx.beans.property.StringProperty;
 
@@ -12,7 +13,7 @@ public class Book {
     private final StringProperty title = new SimpleStringProperty();
     private final StringProperty author = new SimpleStringProperty();
     private final StringProperty isbn = new SimpleStringProperty();
-    private final StringProperty publishedDate = new SimpleStringProperty();
+    private LocalDate publishedDate;
 
     // Getters and Setters for Properties
     public String getId() { return id.get(); }
@@ -31,7 +32,8 @@ public class Book {
     public void setIsbn(String isbn) { this.isbn.set(isbn); }
     public StringProperty isbnProperty() { return isbn; }
 
-    public String getPublishedDate() { return publishedDate.get(); }
-    public void setPublishedDate(String publishedDate) { this.publishedDate.set(publishedDate); }
-    public StringProperty publishedDateProperty() { return publishedDate; }
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd")
+    public LocalDate getPublishedDate() { return publishedDate; }
+    public void setPublishedDate(LocalDate publishedDate) { this.publishedDate = publishedDate; }
+    public StringProperty publishedDateProperty() { return new SimpleStringProperty(publishedDate.toString()); }
 }

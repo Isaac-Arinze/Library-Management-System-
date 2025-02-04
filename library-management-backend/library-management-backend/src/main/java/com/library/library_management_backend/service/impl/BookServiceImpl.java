@@ -1,6 +1,7 @@
 package com.library.library_management_backend.service.impl;
 
 import com.library.library_management_backend.entity.Book;
+import com.library.library_management_backend.exception.BookNotFoundException;
 import com.library.library_management_backend.repository.BookRepository;
 import com.library.library_management_backend.service.BookService;
 import jakarta.transaction.Transactional;
@@ -28,15 +29,20 @@ public class BookServiceImpl implements BookService {
         return bookRepository.save(book);
     }
 
-    @Override
-    public Page<Book> getAllBooks(Pageable pageable) {
-        return bookRepository.findAll(pageable);
-    }
+//    @Override
+//    public Page<Book> getAllBooks(Pageable pageable) {
+//        return bookRepository.findAll(pageable);
+//    }
+@Override
+public List<Book> getAllBooks(Pageable pageable) {
+    Page<Book> page = bookRepository.findAll(pageable);
+    return page.getContent();
+}
 
     @Override
     public Book getBook(Long id) {
         return bookRepository.findById(id)
-                .orElseThrow(()-> new RuntimeException("Book with Id not found " + id));
+                .orElseThrow(()-> new BookNotFoundException("Book with Id not found " + id));
     }
 
     @Override

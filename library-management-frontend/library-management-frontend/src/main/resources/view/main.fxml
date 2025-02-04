@@ -1,0 +1,68 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+<?import javafx.geometry.Insets?>
+
+<VBox xmlns:fx="http://javafx.com/fxml"
+      fx:controller="com.library.library_management_frontend.controller.MainController"
+      spacing="10"
+      prefHeight="500.0"
+      prefWidth="800.0">
+
+    <padding>
+        <Insets top="15" right="15" bottom="15" left="15"/>
+    </padding>
+
+    <!-- TableView for displaying books -->
+    <TableView fx:id="bookTable" VBox.vgrow="ALWAYS">
+        <columns>
+            <TableColumn fx:id="titleColumn" text="Title" minWidth="150"/>
+            <TableColumn fx:id="authorColumn" text="Author" minWidth="150"/>
+            <TableColumn fx:id="isbnColumn" text="ISBN" minWidth="100"/>
+            <TableColumn fx:id="publishedDateColumn" text="Published Date" minWidth="120"/>
+        </columns>
+    </TableView>
+
+    <!-- Input and Action Section -->
+    <GridPane hgap="10" vgap="10">
+        <Label text="Title" GridPane.rowIndex="0" GridPane.columnIndex="0"/>
+        <TextField fx:id="titleField" promptText="Enter book title"
+                   GridPane.rowIndex="1" GridPane.columnIndex="0"
+                   GridPane.hgrow="ALWAYS"/>
+
+        <Label text="Author" GridPane.rowIndex="0" GridPane.columnIndex="1"/>
+        <TextField fx:id="authorField" promptText="Enter author name"
+                   GridPane.rowIndex="1" GridPane.columnIndex="1"
+                   GridPane.hgrow="ALWAYS"/>
+
+        <Label text="ISBN" GridPane.rowIndex="0" GridPane.columnIndex="2"/>
+        <TextField fx:id="isbnField" promptText="Enter ISBN"
+                   GridPane.rowIndex="1" GridPane.columnIndex="2"
+                   GridPane.hgrow="ALWAYS"/>
+
+        <Label text="Published Date" GridPane.rowIndex="0" GridPane.columnIndex="3"/>
+        <TextField fx:id="publishedDateField" promptText="YYYY-MM-DD"
+                   GridPane.rowIndex="1" GridPane.columnIndex="3"
+                   GridPane.hgrow="ALWAYS"/>
+    </GridPane>
+
+    <!-- Action Buttons -->
+    <HBox spacing="10" alignment="CENTER">
+        <Button text="Add Book" onAction="#handleAddBook"
+                style="-fx-background-color: green; -fx-text-fill: white;"/>
+        <Button text="Update Book" onAction="#handleUpdateBook"
+                style="-fx-background-color: blue; -fx-text-fill: white;"/>
+        <Button text="Delete Book" onAction="#handleDeleteBook"
+                style="-fx-background-color: red; -fx-text-fill: white;"/>
+        <Button text="Refresh" onAction="#handleRefresh"
+                style="-fx-background-color: orange; -fx-text-fill: white;"/>
+    </HBox>
+
+    <!-- Pagination Controls -->
+    <HBox spacing="10" alignment="CENTER">
+        <Button fx:id="prevPageButton" text="Previous" />
+        <Label fx:id="pageInfoLabel" text="Page 1 of 1"/>
+        <Button fx:id="nextPageButton" text="Next" />
+    </HBox>
+</VBox>

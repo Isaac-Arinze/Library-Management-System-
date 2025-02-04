@@ -8,7 +8,8 @@ import java.util.List;
 
 public interface BookService {
     Book saveBook(Book book);
-    Page<Book> getAllBooks(Pageable pageable);
+//    Page<Book> getAllBooks(Pageable pageable);
+List<Book> getAllBooks(Pageable pageable);
 
     Book getBook(Long id);
     Book updateBook(Long id, Book book);
