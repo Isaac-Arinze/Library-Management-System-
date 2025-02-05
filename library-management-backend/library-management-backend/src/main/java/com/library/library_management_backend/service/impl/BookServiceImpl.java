@@ -49,7 +49,6 @@ public List<Book> getAllBooks(Pageable pageable) {
     public Book updateBook(Long id, Book book) {
 
         Book existingBook = getBook(id);
-
         existingBook.setTitle(book.getTitle());
         existingBook.setAuthor(book.getAuthor());
         existingBook.setIsbn(book.getIsbn());
@@ -64,8 +63,7 @@ public List<Book> getAllBooks(Pageable pageable) {
     }
 
     @Override
-    public List<Book>
-    searchBooks(String searchBook) {
+    public List<Book> searchBooks(String searchBook) {
         return bookRepository.searchBooks(searchBook);
     }
 }
