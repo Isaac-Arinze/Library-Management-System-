@@ -37,15 +37,16 @@ public class BookController {
         }
     }
 
-//    @GetMapping
-//    public ResponseEntity<Page<Book>> getAllBooks(
-//            @RequestParam(defaultValue = "0") int page,
-//            @RequestParam(defaultValue = "10") int size,
-//            @RequestParam(defaultValue = "title") String sortBy
-//    ) {
-//        Pageable pageable = PageRequest.of(page, size, Sort.by(sortBy));
-//        return ResponseEntity.ok(bookService.getAllBooks(pageable));
-//    }
+    @GetMapping
+    public ResponseEntity<Page<Book>> getAllBooks(
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "10") int size,
+            @RequestParam(defaultValue = "title") String sortBy
+    ) {
+        Pageable pageable = PageRequest.of(page, size, Sort.by(sortBy));
+        return ResponseEntity.ok(bookService.getAllBooks(pageable));
+    }
+
 
 
 
@@ -54,10 +55,10 @@ public class BookController {
         return ResponseEntity.ok(bookService.saveBook(book));
     }
 
-    @GetMapping
-    public ResponseEntity<List<Book>> getAllBooks(Pageable pageable) {
-        return ResponseEntity.ok(bookService.getAllBooks(pageable));
-    }
+//    @GetMapping
+//    public ResponseEntity<List<Book>> getAllBooks(Pageable pageable) {
+//        return ResponseEntity.ok(bookService.getAllBooks(pageable));
+//    }
 
 
     @PutMapping("/{id}")
@@ -72,8 +73,20 @@ public class BookController {
     }
 
 
-    @GetMapping("/search")
-    public ResponseEntity<List<Book>> searchBooks(@RequestParam String term) {
-        return ResponseEntity.ok(bookService.searchBooks(term));
-    }
+//    @GetMapping("/search")
+//    public ResponseEntity<List<Book>> searchBooks(@RequestParam String term) {
+//        return ResponseEntity.ok(bookService.searchBooks(term));
+//    }
+
+@GetMapping("/search")
+public ResponseEntity<Page<Book>> searchBooks(
+        @RequestParam String term,
+        @RequestParam(defaultValue = "0") int page,
+        @RequestParam(defaultValue = "10") int size,
+        @RequestParam(defaultValue = "title") String sortBy
+) {
+    Pageable pageable = PageRequest.of(page, size, Sort.by(sortBy));
+    return ResponseEntity.ok(bookService.searchBooks(term, pageable));
+}
+
 }

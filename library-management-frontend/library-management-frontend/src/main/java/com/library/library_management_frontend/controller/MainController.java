@@ -1,6 +1,7 @@
 package com.library.library_management_frontend.controller;
 
 import com.library.library_management_frontend.model.Book;
+import com.library.library_management_frontend.response.PageResponse;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
@@ -17,29 +18,44 @@ import java.util.List;
 
 public class MainController {
 
-    @FXML private TableView<Book> bookTable;
-    @FXML private TableColumn<Book, String> titleColumn;
-    @FXML private TableColumn<Book, String> authorColumn;
-    @FXML private TableColumn<Book, String> isbnColumn;
-    @FXML private TableColumn<Book, String> publishedDateColumn;
+    @FXML
+    private TableView<Book> bookTable;
+    @FXML
+    private TableColumn<Book, String> titleColumn;
+    @FXML
+    private TableColumn<Book, String> authorColumn;
+    @FXML
+    private TableColumn<Book, String> isbnColumn;
+    @FXML
+    private TableColumn<Book, String> publishedDateColumn;
 
-    @FXML private TextField titleField;
-    @FXML private TextField authorField;
-    @FXML private TextField isbnField;
-    @FXML private TextField publishedDateField;
+    @FXML
+    private TextField titleField;
+    @FXML
+    private TextField authorField;
+    @FXML
+    private TextField isbnField;
+    @FXML
+    private TextField publishedDateField;
+    @FXML
+    private TextField searchField;
 
     @FXML private Button prevPageButton;
     @FXML private Button nextPageButton;
     @FXML private Label pageInfoLabel;
+
+    private int currentPage = 0;
+    private final int pageSize = 10;
+    private int totalPages = 0;
+    private boolean isSearchMode = false;
+    private String lastSearchTerm = "";
+
 
     private final RestTemplate restTemplate = new RestTemplate();
     private final String BASE_URL = "http://localhost:8085/api/books";
 
     private ObservableList<Book> bookList = FXCollections.observableArrayList();
 
-    private int currentPage = 0;
-    private int pageSize = 10;
-    private int totalPages = 0;
     private List<Book> allBooks;
 
     @FXML
@@ -57,19 +73,30 @@ public class MainController {
 
     private void loadBooks() {
         try {
-            ResponseEntity<List<Book>> response = restTemplate.exchange(
-                    BASE_URL,
+            String url = BASE_URL + "?page=" + currentPage + "&size=" + pageSize;
+
+            ResponseEntity<PageResponse<Book>> response = restTemplate.exchange(
+                    url,
                     HttpMethod.GET,
                     null,
-                    new ParameterizedTypeReference<List<Book>>() {}
+                    new ParameterizedTypeReference<PageResponse<Book>>() {}
             );
-            bookList.clear();
-            bookList.addAll(response.getBody());
-            bookTable.setItems(bookList);
+
+            PageResponse<Book> pageResponse = response.getBody();
+            if (pageResponse != null) {
+                bookList.clear();
+                bookList.addAll(pageResponse.getContent());
+                bookTable.setItems(bookList);
+
+                totalPages = pageResponse.getTotalPages();
+                updatePaginationControls();
+            }
         } catch (RestClientException e) {
             showErrorAlert("Error Loading Books", "Could not fetch books from the server.", e.getMessage());
         }
     }
+
+
 
     @FXML
     private void handleDeleteBook() {
@@ -138,19 +165,45 @@ public class MainController {
         pageInfoLabel.setText(String.format("Page %d of %d", currentPage + 1, totalPages));
     }
 
+
+//    private void loadPreviousPage() {
+//        if (currentPage > 0) {
+//            currentPage--;
+//            updatePagedBooks();
+//        }
+//    }
+
+    @FXML
     private void loadPreviousPage() {
         if (currentPage > 0) {
             currentPage--;
-            updatePagedBooks();
+            if (isSearchMode) {
+                loadSearchResults();
+            } else {
+                loadBooks();
+            }
         }
     }
 
+    @FXML
     private void loadNextPage() {
         if (currentPage < totalPages - 1) {
             currentPage++;
-            updatePagedBooks();
+            if (isSearchMode) {
+                loadSearchResults();
+            } else {
+                loadBooks();
+            }
         }
     }
+
+
+//    private void loadNextPage() {
+//        if (currentPage < totalPages - 1) {
+//            currentPage++;
+//            updatePagedBooks();
+//        }
+//    }
 
     private void showErrorAlert(String title, String header, String content) {
         Alert alert = new Alert(Alert.AlertType.ERROR);
@@ -177,5 +230,80 @@ public class MainController {
             showErrorAlert("Add Book Error", "Failed to add book", e.getMessage());
         }
     }
+
+//    @FXML
+//    private void handleSearch() {
+//        String searchTerm = searchField.getText().trim();
+//        if (searchTerm.isEmpty()) {
+//            loadBooks(); // Reload all books if search is empty
+//            return;
+//        }
+//
+//        try {
+//            String searchUrl = BASE_URL + "/search?term=" + searchTerm;
+//            ResponseEntity<List<Book>> response = restTemplate.exchange(
+//                    searchUrl,
+//                    HttpMethod.GET,
+//                    null,
+//                    new ParameterizedTypeReference<List<Book>>() {}
+//            );
+//
+//            bookList.clear();
+//            bookList.addAll(response.getBody());
+//            bookTable.setItems(bookList);
+//        } catch (RestClientException e) {
+//            showErrorAlert("Search Error", "Could not fetch search results.", e.getMessage());
+//        }
+//    }
+//    @FXML
+//    private void handleClearSearch() {
+//        searchField.clear();
+//        loadBooks();
+//    }
+
+    @FXML
+    private void handleSearch() {
+        String searchTerm = searchField.getText().trim();
+        if (searchTerm.isEmpty()) {
+            isSearchMode = false;
+            currentPage = 0;
+            loadBooks(); // Reload all books if search is empty
+            return;
+        }
+
+        isSearchMode = true;
+        lastSearchTerm = searchTerm;
+        currentPage = 0; // Reset to first page
+        loadSearchResults();
+    }
+    private void loadSearchResults() {
+        try {
+            String searchUrl = BASE_URL + "/search?term=" + lastSearchTerm +
+                    "&page=" + currentPage +
+                    "&size=" + pageSize;
+
+            ResponseEntity<PageResponse<Book>> response = restTemplate.exchange(
+                    searchUrl,
+                    HttpMethod.GET,
+                    null,
+                    new ParameterizedTypeReference<PageResponse<Book>>() {}
+            );
+
+            PageResponse<Book> pageResponse = response.getBody();
+            if (pageResponse != null) {
+                bookList.clear();
+                bookList.addAll(pageResponse.getContent());
+                bookTable.setItems(bookList);
+
+                totalPages = pageResponse.getTotalPages();
+                updatePaginationControls();
+            }
+        } catch (RestClientException e) {
+            showErrorAlert("Search Error", "Could not fetch search results.", e.getMessage());
+        }
+    }
+
+
+
 
 }
