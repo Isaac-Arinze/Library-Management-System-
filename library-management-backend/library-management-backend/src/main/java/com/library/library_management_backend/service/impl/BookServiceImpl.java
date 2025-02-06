@@ -33,11 +33,7 @@ public class BookServiceImpl implements BookService {
 //    public Page<Book> getAllBooks(Pageable pageable) {
 //        return bookRepository.findAll(pageable);
 //    }
-//@Override
-//public List<Book> getAllBooks(Pageable pageable) {
-//    Page<Book> page = bookRepository.findAll(pageable);
-//    return page.getContent();
-//}
+
 
     public Page<Book> getAllBooks(Pageable pageable) {
         return bookRepository.findAll(pageable);
@@ -70,6 +66,7 @@ public class BookServiceImpl implements BookService {
 //    public List<Book> searchBooks(String searchBook) {
 //        return bookRepository.searchBooks(searchBook);
 //    }
+
 //public List<Book> searchBooks(String term) {
 //    return bookRepository.findByTitleContainingIgnoreCaseOrAuthorContainingIgnoreCaseOrIsbnContainingIgnoreCase(term, term, term);
 //}
