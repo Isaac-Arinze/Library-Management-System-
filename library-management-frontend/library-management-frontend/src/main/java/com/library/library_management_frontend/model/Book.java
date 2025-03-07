@@ -35,5 +35,10 @@ public class Book {
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd")
     public LocalDate getPublishedDate() { return publishedDate; }
     public void setPublishedDate(LocalDate publishedDate) { this.publishedDate = publishedDate; }
-    public StringProperty publishedDateProperty() { return new SimpleStringProperty(publishedDate.toString()); }
+//    public StringProperty publishedDateProperty() { return new SimpleStringProperty(publishedDate.toString()); }
+
+    public StringProperty publishedDateProperty() {
+        return new SimpleStringProperty(publishedDate != null ? publishedDate.toString() : "");
+    }
+
 }

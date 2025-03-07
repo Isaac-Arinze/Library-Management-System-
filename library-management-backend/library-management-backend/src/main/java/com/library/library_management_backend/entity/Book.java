@@ -1,10 +1,7 @@
 package com.library.library_management_backend.entity;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
+import jakarta.persistence.*;
 import jakarta.validation.constraints.NotBlank;
 import java.time.LocalDate;
 
@@ -20,13 +17,16 @@ public class Book {
     @NotBlank(message = "Author is required")
     private String author;
 
+
+    @Column(unique = true)
     @NotBlank(message = "ISBN is required")
     private String isbn;
+
 
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd")
     private LocalDate publishedDate;
 
-    // Getters and Setters
+
     public Long getId() { return id; }
     public void setId(Long id) { this.id = id; }
 

@@ -2,15 +2,15 @@ package com.library.library_management_backend.service.impl;
 
 import com.library.library_management_backend.entity.Book;
 import com.library.library_management_backend.exception.BookNotFoundException;
+import com.library.library_management_backend.exception.DuplicateIsbnException;
 import com.library.library_management_backend.repository.BookRepository;
 import com.library.library_management_backend.service.BookService;
 import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
-
-import java.util.List;
 
 
 @Service
@@ -26,7 +26,11 @@ public class BookServiceImpl implements BookService {
 
     @Override
     public Book saveBook(Book book) {
-        return bookRepository.save(book);
+        try {
+            return bookRepository.save(book);
+        } catch (DataIntegrityViolationException ex) {
+            throw new DuplicateIsbnException("Oops! A book with ISBN " + book.getIsbn() + " already exists.");
+        }
     }
 
 //    @Override
