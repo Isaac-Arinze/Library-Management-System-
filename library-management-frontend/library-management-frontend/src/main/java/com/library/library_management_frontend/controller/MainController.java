@@ -282,7 +282,7 @@ public class MainController {
                     "&page=" + currentPage +
                     "&size=" + pageSize;
 
-            ResponseEntity<PageResponse<Book>> response = restTemplate.exchange(
+            ResponseEntity<PageResponse<Book>  > response = restTemplate.exchange(
                     searchUrl,
                     HttpMethod.GET,
                     null,

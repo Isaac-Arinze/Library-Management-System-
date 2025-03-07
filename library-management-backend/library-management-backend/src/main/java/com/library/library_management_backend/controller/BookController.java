@@ -5,6 +5,7 @@ import com.library.library_management_backend.exception.BookNotFoundException;
 import com.library.library_management_backend.service.BookService;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
+import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.bind.annotation.RequestMapping;
 
@@ -48,16 +49,15 @@ public class BookController {
     }
 
 
-
-
     @PostMapping
     public ResponseEntity<Book> createBook(@RequestBody Book book) {
-        return ResponseEntity.ok(bookService.saveBook(book));
+        Book savedBook = bookService.saveBook(book);
+        return ResponseEntity.status(HttpStatus.CREATED).body(savedBook);
     }
 
 //    @GetMapping
 //    public ResponseEntity<List<Book>> getAllBooks(Pageable pageable) {
-//        return ResponseEntity.ok(bookService.getAllBooks(pageable));
+//        return ResponseEntity.ok(bookService.getAHlBooks(pageable));
 //    }
 
 
